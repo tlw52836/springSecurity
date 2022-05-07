@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -41,12 +42,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             Claims claims = JwtUtil.parseJWT(token);
             userid = claims.getSubject();
         } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new RuntimeException("token非法");
-            response.setStatus(403);
+            response.setStatus(200);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
-            response.getWriter().print(JSON.toJSONString(Result.fail(403, "token非法")));
+            response.getWriter().print(JSON.toJSONString(Result.fail(401, "token非法")));
             return;
         }
 
@@ -57,11 +56,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
 
         if(Objects.isNull(loginUser)){
-            //throw new RuntimeException("用户未登录");
             response.setStatus(403);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
-            response.getWriter().print(JSON.toJSONString(Result.fail(403, "用户未登录")));
+            response.getWriter().print(JSON.toJSONString(Result.fail(401, "用户未登录")));
             return;
         }
 

@@ -14,6 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 
 @Service
 public class LoginServcieImpl implements LoginServcie {
@@ -26,12 +28,7 @@ public class LoginServcieImpl implements LoginServcie {
     @Override
     public Result login(User user) {
         Authentication authenticationToken = new UsernamePasswordAuthenticationToken(user.getUserName(),user.getPassword());
-        Authentication authenticate = null;
-        try {
-            authenticate = authenticationManager.authenticate(authenticationToken);
-        } catch (BadCredentialsException e) {
-            return Result.fail(403,"用户名或密码错误");
-        }
+        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 
         //使用userid生成token
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();

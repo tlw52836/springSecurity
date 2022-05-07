@@ -2,6 +2,7 @@ package com.tlw.service.impl;
 
 import com.tlw.entity.LoginUser;
 import com.tlw.entity.User;
+import com.tlw.service.MenuService;
 import com.tlw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +20,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MenuService menuService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userService.findByUserName(username);
@@ -29,7 +33,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         //TODO 根据用户查询权限信息 添加到LoginUser中
 
         //封装成UserDetails对象返回
-        List<String> authorities = new ArrayList<>(Arrays.asList("test"));
+        List<String> authorities = menuService.findMenusByUserId(user.getId());
         return new LoginUser(user,authorities);
     }
 }

@@ -1,6 +1,7 @@
 package com.tlw;
 
 import com.tlw.entity.User;
+import com.tlw.mapper.MenuMapper;
 import com.tlw.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ class SpringSecurityApplicationTests {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private MenuMapper menuMapper;
+
     @Test
     public void testUserMapper(){
         List<User> users = userMapper.selectList(null);
@@ -25,6 +29,12 @@ class SpringSecurityApplicationTests {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         System.out.println(encoder.encode("2695684aaa"));
         System.out.println(encoder.encode("2695684aaa"));
+    }
+
+    @Test
+    public void testMenuMapper(){
+        List<String> menus = menuMapper.findMenusByUserId(1l);
+        System.out.println(menus);
     }
 
 }

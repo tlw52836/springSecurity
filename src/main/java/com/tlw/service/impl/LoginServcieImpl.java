@@ -9,6 +9,7 @@ import com.tlw.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -26,10 +27,13 @@ public class LoginServcieImpl implements LoginServcie {
     @Override
     public Result login(User user) {
         Authentication authenticationToken = new UsernamePasswordAuthenticationToken(user.getUserName(),user.getPassword());
-        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
-        if(Objects.isNull(authenticate)){
-            throw new RuntimeException("用户名或密码错误");
+        Authentication authenticate = null;
+        try {
+            authenticate = authenticationManager.authenticate(authenticationToken);
+        } catch (BadCredentialsException e) {
+            return Result.fail(403,"用户名或密码错误");
         }
+
         //使用userid生成token
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
         String userId = loginUser.getUser().getId().toString();

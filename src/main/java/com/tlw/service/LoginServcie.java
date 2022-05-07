@@ -5,4 +5,6 @@ import com.tlw.vo.Result;
 
 public interface LoginServcie {
     Result login(User user);
+
+    Result logout(String token);
 }

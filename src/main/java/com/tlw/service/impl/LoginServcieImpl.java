@@ -14,7 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 
 @Service
 public class LoginServcieImpl implements LoginServcie {
@@ -40,11 +39,17 @@ public class LoginServcieImpl implements LoginServcie {
         String token = JwtUtil.createJWT(userId);
 
         //authenticate存入redis
-        String key = "user::" + token;
-        redisTemplate.opsForValue().set(key, JSON.toJSONString(loginUser));
+        String redisKey = "user::" + token;
+        redisTemplate.opsForValue().set(redisKey, JSON.toJSONString(loginUser));
 
         //把token响应给前端
         Result result = Result.success(token);
         return result;
+    }
+
+    @Override
+    public Result logout(String token) {
+        redisTemplate.delete("user::" + token);
+        return Result.success("注销成功");
     }
 }
